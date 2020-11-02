@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(Home());
 }
 
-class MyApp extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,10 +17,47 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text("TIG169"),
           centerTitle: true,
+          actions: [
+            MoreButton(),
+          ],
         ),
         body: _ListView(),
       ),
     );
+  }
+}
+
+class MoreButton extends StatefulWidget {
+  @override
+  _MoreButtonState createState() => _MoreButtonState();
+}
+
+class _MoreButtonState extends State<MoreButton> {
+  @override
+  Widget build(BuildContext context) {
+    Icon _icon = Icon(Icons.more_vert);
+    return PopupMenuButton(
+      icon: _icon,
+      //onSelected: , kommer ha en navigator
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: Text("apa"),
+        ),
+      ],
+    );
+
+    // Icon _icon = Icon(Icons.more_vert);
+    // return IconButton(
+    //   icon: _icon,
+    //   onPressed: () {
+    //     setState(
+    //       () {
+    //         _icon = Icon(Icons.more_horiz);
+    //         print("apasdasss");
+    //       },
+    //     );
+    //   },
+    // );
   }
 }
 
