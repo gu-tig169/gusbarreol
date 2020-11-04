@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/main.dart';
 
+//TODO hämta data från textcontainer och skicka till array i main
+// vänta tills db-integration?
 class AddTaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

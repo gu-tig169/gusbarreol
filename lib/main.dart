@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/secondPage.dart';
 
+//FIXA INLÄMNINGEN n
+
 void main() {
   runApp(Home());
 }
 
 var testArr = ["122", "2222", "3222", "322", "322", "322", "322"];
+var boolArray = new List();
 
 class Home extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _HomeState createState() => _HomeState();
 }
 
-class _MyAppState extends State<Home> {
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,6 +59,8 @@ class MyCustomAppBar extends StatelessWidget with PreferredSizeWidget {
 }
 
 //TODO checka i alla i "testArr", done eller undone
+//all=markera alla. done=boolArray alla true. undone=boolArray alla false
+//vänta på db-integration innan denna
 class MoreButton extends StatefulWidget {
   @override
   _MoreButtonState createState() => _MoreButtonState();
@@ -73,7 +78,8 @@ class _MoreButtonState extends State<MoreButton> {
             title: Text("all"),
             onTap: () {
               setState(() {
-                print("apa");
+                //print("all");
+                //sätta alla till true?
               });
             },
           ),
@@ -83,7 +89,7 @@ class _MoreButtonState extends State<MoreButton> {
             title: Text("done"),
             onTap: () {
               setState(() {
-                print("apa");
+                print("done");
               });
             },
           ),
@@ -93,7 +99,7 @@ class _MoreButtonState extends State<MoreButton> {
             title: Text("undone"),
             onTap: () {
               setState(() {
-                print("apa");
+                print("undone");
               });
             },
           ),
@@ -117,15 +123,13 @@ class _MoreButtonState extends State<MoreButton> {
   }
 }
 
-//TODO strecka över
+//Dynamisk listview på testArr
 class MyCustomListview extends StatefulWidget {
   @override
   _MyCustomListviewState createState() => _MyCustomListviewState();
 }
 
 class _MyCustomListviewState extends State<MyCustomListview> {
-  var boolArray = new List();
-  //bool _isSet = false;
   @override
   Widget build(BuildContext context) {
     //skapa unikt bool-värde för varje index i testArr
@@ -137,24 +141,22 @@ class _MyCustomListviewState extends State<MyCustomListview> {
       itemCount: testArr.length,
       itemBuilder: (context, index) {
         var _title = Text(testArr[index]);
+
+        //Stryker över text om true
+        if (boolArray[index] == true) {
+          _title = Text(testArr[index],
+              style: TextStyle(decoration: TextDecoration.lineThrough));
+        }
+
         return Card(
           margin: EdgeInsets.all(5.0),
           child: CheckboxListTile(
             value: boolArray[index],
             title: _title,
-            //on checkbox-press
+            //on checkbox-press sätt index till true
             onChanged: (bool newVal) {
               setState(() {
                 boolArray[index] = newVal;
-                //BUG funkar inte? ska kryssas över
-                if (boolArray[index] == true) {
-                  _title = Text(testArr[index],
-                      style: TextStyle(decoration: TextDecoration.lineThrough));
-                  print(_title);
-                } else {
-                  //_title = Text(testArr[index]);
-                  print("else strikethrough");
-                }
               });
             },
             controlAffinity: ListTileControlAffinity.leading,
