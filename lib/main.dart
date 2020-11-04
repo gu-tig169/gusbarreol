@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
 }
 
 //preferedsizewidget är till för att kunna bryta ut appbar
-class MyCustomAppBar extends StatelessWidget with PreferredSizeWidget {
+class MyCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
