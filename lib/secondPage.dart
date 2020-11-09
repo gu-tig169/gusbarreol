@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/main.dart';
 
-//TODO hämta data från textcontainer och skicka till array i main
-// vänta tills db-integration?
+//hämtar data från textcontainer och skicka till testArr i main
 class AddTaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    TextEditingController inputController = TextEditingController();
     return MaterialApp(
       home: Scaffold(
           appBar: MyCustomAppBar(),
@@ -15,6 +15,7 @@ class AddTaskPage extends StatelessWidget {
               child: Column(
                 children: [
                   TextField(
+                    controller: inputController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "What are you going to do?",
@@ -22,7 +23,16 @@ class AddTaskPage extends StatelessWidget {
                   ),
                   SizedBox(height: 20),
                   FlatButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      inputController
+                          .toString(); //<-- set toString här för att slippa bugg i main
+                      //print("inputController: " + inputController.text);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Home(userInput: inputController.text)));
+                    },
                     icon: Icon(Icons.add),
                     label: Text("Add"),
                   ),
