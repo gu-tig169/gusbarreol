@@ -5,11 +5,10 @@ void main() {
   runApp(Home());
 }
 
-String sorterVar = "all";
-var testArr = ["122", "2222", "3222", "322", "322", "322", "322"];
-var boolArray = new List();
-var filteredDoneArr = new List<String>();
-var filteredUndoneArr = new List<String>();
+//TODO Fråga, är det konvention/ ok att ha kvar dessa globalerna?
+//Rensa bort globala variabler
+List dbArr = ["122", "2222", "3222", "apan", "sa", "inget", "112"];
+List boolArray = new List();
 
 class Home extends StatefulWidget {
   //user input från secondPage. tas in via Homes konstruktor
@@ -22,10 +21,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  //Lägger till användare i dbArr beroende på de kriterier under ifrån secondPage.
+  //dbArr ska bytas ut mot db-integration när det SKA GOERASSSSSS då det är utifrån den listviewbuilder skapar första vyn
+  void addUserInputTodbArr(widget) {
+    if (widget.userInput != null && widget.userInput.isNotEmpty) {
+      //print("row 139:  " + widget.userInput);
+      dbArr.add(widget.userInput);
+      boolArray.add(false);
+    } else if (widget.userInput == null) {
+      //print("NULL row 142");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    //körs var gång sidan byggs upp. Finns det bättre sätt?
-    addUserInputToTestArr(widget);
+    //BUGG körs var gång sidan byggs upp. ska bara köras när användaren lägger till
+    //flytta till listview. För att göra det:
+    //flytta metoden och vart man tar emot userInput ifrån secondPage till konstruktorn i MyCustomListView
+    addUserInputTodbArr(widget);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -52,28 +65,28 @@ class _HomeState extends State<Home> {
   }
 }
 
-//preferedsizewidget är till för att kunna bryta ut appbar
-class MyCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: Text("TIG169"),
-      centerTitle: true,
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
-}
-
-//TODO "all", "done", "undone" ska vara filter
-//SKapa en filterfunktion som filtrerar testArr beroende på boolArr?
+//"all", "done", "undone" ska vara filter
 class MoreButton extends StatefulWidget {
   @override
   _MoreButtonState createState() => _MoreButtonState();
 }
 
 class _MoreButtonState extends State<MoreButton> {
+  //Input == false eller true beroende på vad man vill sortera
+  List addToFilterIf(input) {
+    List filteredArr = [];
+    filteredArr.clear();
+
+    for (var i = 0; i < boolArray.length; i++) {
+      if (boolArray[i] == input && dbArr.isNotEmpty) {
+        filteredArr.add(dbArr[i]);
+      } else {
+        //print(input.toString() + " i addToFilterIf: ");
+      }
+    }
+    return filteredArr;
+  }
+
   @override
   Widget build(BuildContext context) {
     Icon _icon = Icon(Icons.more_vert);
@@ -84,67 +97,29 @@ class _MoreButtonState extends State<MoreButton> {
           child: ListTile(
             title: Text("all"),
             onTap: () {
-              // //ska visa både true och false
-              // sorterVar = "all";
-              // print(sorterVar);
-              // setState(() {
-              //   testArr = testArr;
-              // });
-
-              print(boolArray);
-              boolArray = boolArray
-                  .where((element) => element == true && false)
-                  .toList();
-              print(boolArray);
+              setListViewArray(dbArr);
             },
           ),
         ),
         PopupMenuItem(
           child: ListTile(
             title: Text("done"),
+            //true
             onTap: () {
-              // sorterVar = "done";
-              // print(sorterVar);
-              // filteredDoneArr.clear();
-              // for (int i = 0; i < testArr.length; i++) {
-              //   if (boolArray[i] == true) {
-              //     filteredDoneArr.add(testArr[i]);
-              //     //print("true testArr " + testArr[i]);
-              //   }
-              // }
-              // setState(() {
-              //   testArr = filteredDoneArr;
-              // });
-              // print(testArr);
-              print(boolArray);
-              boolArray =
-                  boolArray.where((element) => element == true).toList();
-              print(boolArray);
+              List filteredArr = addToFilterIf(true);
+
+              setListViewArray(filteredArr);
             },
           ),
         ),
         PopupMenuItem(
           child: ListTile(
             title: Text("undone"),
+            //false
             onTap: () {
-              // //ska visa false
-              // sorterVar = "undone";
-              // print(sorterVar);
-              // filteredUndoneArr.clear();
-              // for (int i = 0; i < testArr.length; i++) {
-              //   if (boolArray[i] == false) {
-              //     filteredUndoneArr.add(testArr[i]);
-              //     //print("false testArr " + testArr[i]);
-              //   }
-              // }
-              // setState(() {
-              //   testArr = filteredUndoneArr;
-              // });
-              // print(testArr);
-              print(boolArray);
-              boolArray =
-                  boolArray.where((element) => element == false).toList();
-              print(boolArray);
+              List filteredArr = addToFilterIf(false);
+
+              setListViewArray(filteredArr);
             },
           ),
         ),
@@ -167,49 +142,23 @@ class _MoreButtonState extends State<MoreButton> {
   }
 }
 
-// //bestämmer vilken lista som listview ska visa
-// List filter() {
-//   if (sorterVar == "done") {
-//     //returenra lista med done
-//     for (int i = 0; i < testArr.length; i++) {
-//       if (boolArray[i] == true) {
-//         filteredArr.add(testArr[i]);
-//         print("true testArr " + testArr[i]);
-//       }
-//     }
-//     return filteredArr;
-//   } else if (sorterVar == "undone") {
-//     //returnera lista med undone
-//     for (int i = 0; i < testArr.length; i++) {
-//       if (boolArray[i] == false) {
-//         filteredArr.add(testArr[i]);
-//         print("false testArr " + testArr[i]);
-//       }
-//     }
-//     return filteredArr;
-//   } else if (sorterVar == "all") {
-//     //returnera vanliga listan
-//     return testArr;
-//   }
-// }
+//TODO Fråga samma som ovan eller hur arbeta bort denna globalen? definiera i home och nå via konstruktor?
+List defaultArr = dbArr;
 
-// List filter() {
-//   filteredArr = testArr.where((boolArray) => true).toList();
-//   return filteredArr;
-// }
-
-//BUG lägger till ny varje gång koden körs, inte så viktigt.
-//Lägger till användare i testArr beroende på de kriterier under ifrån secondPage.
-//testArr ska bytas ut mot db-integration när det SKA GOERASSSSSS då det är utifrån den listviewbuilder skapar första vyn
-void addUserInputToTestArr(widget) {
-  if (widget.userInput != null && widget.userInput.isNotEmpty) {
-    //print("row 139:  " + widget.userInput);
-    testArr.add(widget.userInput);
-  } else if (widget.userInput == null) {
-    //print("NULL row 142");
+void setListViewArray(inputArr) {
+  if (inputArr == null) {
+    print("NULL ROW 193");
+  } else if (inputArr.length > 0) {
+    defaultArr = inputArr;
+    //return inputArr;
   }
 }
 
+List getListViewArray() {
+  return defaultArr;
+}
+
+//TODO Här ska listan uppdateras med setState någonstans, WHYYYY GÖR DET INTE DET
 class MyCustomListview extends StatefulWidget {
   @override
   _MyCustomListviewState createState() => _MyCustomListviewState();
@@ -217,32 +166,49 @@ class MyCustomListview extends StatefulWidget {
 
 class _MyCustomListviewState extends State<MyCustomListview> {
   Text _title;
-  @override
-  Widget build(BuildContext context) {
-    //skapa unikt bool-värde för varje index i testArr
+
+  Text checkForNullAndAssignArray(index, defaultArr) {
+    var _title;
+    //kolla efter NULL-värde innan itembuilder skapar den till listview.
+    if (defaultArr[index] == null) {
+      //print("NULL ROW 233, Main.dart");
+    } else if (defaultArr[index].isEmpty) {
+      //print("EMPTY ROW 235");
+    } else if (defaultArr[index] != null && defaultArr[index].isNotEmpty) {
+      //print("row 237: " + dbArr[index].toString());
+      _title = Text(defaultArr[index]);
+    }
+    return _title;
+  }
+
+  void lineThroughIfFalse(index, _title, defaultArr) {
+    //Stryker över text om index är true(icehckad). boolArray är en boolsk array indexerad utefter dbArr.
+    if (boolArray[index] == true) {
+      _title = Text(defaultArr[index],
+          style: TextStyle(decoration: TextDecoration.lineThrough));
+    }
+  }
+
+  void createBoolArray() {
+    //skapa unikt bool-värde för varje index i dbArr
     //representerar om den är iklickad eller inte
-    for (var i = 0; i < testArr.length; i++) {
+    for (var i = 0; i < dbArr.length; i++) {
       boolArray.add(false);
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    createBoolArray();
+
+    defaultArr = getListViewArray();
 
     return ListView.builder(
-      itemCount: testArr.length,
+      itemCount: defaultArr.length,
       itemBuilder: (context, index) {
-        //kolla efter NULL-värde innan itembuilder skapar den till listview.
-        if (testArr[index] == null) {
-          //print("NULL ROW 233, Main.dart");
-        } else if (testArr[index].isEmpty) {
-          //print("EMPTY ROW 235");
-        } else if (testArr[index] != null && testArr[index].isNotEmpty) {
-          //print("row 237: " + testArr[index].toString());
-          _title = Text(testArr[index]);
-        }
+        _title = checkForNullAndAssignArray(index, defaultArr);
 
-        //Stryker över text om index är true(icehckad). boolArray är en boolsk array indexerad utefter testArr.
-        if (boolArray[index] == true) {
-          _title = Text(testArr[index],
-              style: TextStyle(decoration: TextDecoration.lineThrough));
-        }
+        lineThroughIfFalse(index, _title, defaultArr);
 
         return Card(
           margin: EdgeInsets.all(5.0),
@@ -261,7 +227,7 @@ class _MyCustomListviewState extends State<MyCustomListview> {
               //On x-press
               onPressed: () {
                 setState(() {
-                  testArr.removeAt(testArr.indexOf(testArr[index]));
+                  defaultArr.removeAt(defaultArr.indexOf(defaultArr[index]));
                 });
               },
             ),

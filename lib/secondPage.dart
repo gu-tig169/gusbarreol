@@ -43,3 +43,17 @@ class AddTaskPage extends StatelessWidget {
     );
   }
 }
+
+//preferedsizewidget är till för att kunna bryta ut appbar
+class MyCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text("TIG169"),
+      centerTitle: true,
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
