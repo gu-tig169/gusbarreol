@@ -5,10 +5,14 @@ void main() {
   runApp(Home());
 }
 
-//TODO Fråga, är det konvention/ ok att ha kvar dessa globalerna?
+//TODO boolArr måste uppdateras i fas med sorteArr. annars sker sorteringen och de får per automatik false.
+//putta in true/false i createBoolArray
+
+//TODO Fråga1, är det konvention/ ok att ha kvar dessa globalerna? fråga2 varför kan man inte kalla funktioner i en klass ifrån enn annan klass
 //Rensa bort globala variabler
+//Byta ut dessa mot map för att alltid ha een standard key(false) till var value?
 List dbArr = ["122", "2222", "3222", "apan", "sa", "inget", "112"];
-List boolArray = new List();
+List boolArr = new List();
 
 class Home extends StatefulWidget {
   //user input från secondPage. tas in via Homes konstruktor
@@ -27,7 +31,7 @@ class _HomeState extends State<Home> {
     if (widget.userInput != null && widget.userInput.isNotEmpty) {
       //print("row 139:  " + widget.userInput);
       dbArr.add(widget.userInput);
-      boolArray.add(false);
+      boolArr.add(false);
     } else if (widget.userInput == null) {
       //print("NULL row 142");
     }
@@ -77,8 +81,8 @@ class _MoreButtonState extends State<MoreButton> {
     List filteredArr = [];
     filteredArr.clear();
 
-    for (var i = 0; i < boolArray.length; i++) {
-      if (boolArray[i] == input && dbArr.isNotEmpty) {
+    for (var i = 0; i < dbArr.length; i++) {
+      if (boolArr[i] == input && dbArr.isNotEmpty) {
         filteredArr.add(dbArr[i]);
       } else {
         //print(input.toString() + " i addToFilterIf: ");
@@ -98,6 +102,7 @@ class _MoreButtonState extends State<MoreButton> {
             title: Text("all"),
             onTap: () {
               setListViewArray(dbArr);
+              Navigator.pop(context);
             },
           ),
         ),
@@ -109,6 +114,7 @@ class _MoreButtonState extends State<MoreButton> {
               List filteredArr = addToFilterIf(true);
 
               setListViewArray(filteredArr);
+              Navigator.pop(context);
             },
           ),
         ),
@@ -120,6 +126,7 @@ class _MoreButtonState extends State<MoreButton> {
               List filteredArr = addToFilterIf(false);
 
               setListViewArray(filteredArr);
+              Navigator.pop(context);
             },
           ),
         ),
@@ -142,7 +149,7 @@ class _MoreButtonState extends State<MoreButton> {
   }
 }
 
-//TODO Fråga samma som ovan eller hur arbeta bort denna globalen? definiera i home och nå via konstruktor?
+//TODO Fråga3 samma som ovan eller hur arbeta bort denna globalen? definiera i home och nå via konstruktor?
 List defaultArr = dbArr;
 
 void setListViewArray(inputArr) {
@@ -181,44 +188,43 @@ class _MyCustomListviewState extends State<MyCustomListview> {
     return _title;
   }
 
-  void lineThroughIfFalse(index, _title, defaultArr) {
-    //Stryker över text om index är true(icehckad). boolArray är en boolsk array indexerad utefter dbArr.
-    if (boolArray[index] == true) {
-      _title = Text(defaultArr[index],
-          style: TextStyle(decoration: TextDecoration.lineThrough));
-    }
-  }
-
-  void createBoolArray() {
+  //BUG när den sorterar uppdateras inte boolArr, ändra sedan
+  void createBoolArray(defaultArr) {
     //skapa unikt bool-värde för varje index i dbArr
     //representerar om den är iklickad eller inte
-    for (var i = 0; i < dbArr.length; i++) {
-      boolArray.add(false);
+    for (var i = 0; i < defaultArr.length; i++) {
+      boolArr.add(false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    createBoolArray();
+    setState(() {
+      defaultArr = getListViewArray();
+    });
 
-    defaultArr = getListViewArray();
+    createBoolArray(defaultArr);
 
     return ListView.builder(
       itemCount: defaultArr.length,
       itemBuilder: (context, index) {
         _title = checkForNullAndAssignArray(index, defaultArr);
 
-        lineThroughIfFalse(index, _title, defaultArr);
+        //Stryker över text om index är true(icehckad). boolArr är en boolsk array indexerad utefter dbArr.
+        if (boolArr[index] == true) {
+          _title = Text(defaultArr[index],
+              style: TextStyle(decoration: TextDecoration.lineThrough));
+        }
 
         return Card(
           margin: EdgeInsets.all(5.0),
           child: CheckboxListTile(
-            value: boolArray[index],
+            value: boolArr[index],
             title: _title,
             //on checkbox-press sätt index till true
             onChanged: (bool newVal) {
               setState(() {
-                boolArray[index] = newVal;
+                boolArr[index] = newVal;
               });
             },
             controlAffinity: ListTileControlAffinity.leading,
