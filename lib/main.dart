@@ -11,7 +11,7 @@ void main() {
 //TODO
 //1. addtolist
 //2. filter
-//För att lyckas, antingen passa datan till modellen eller sätta consumer i MoreButton och Home för att kunna kalla på modellen
+//färdiga men hur integrera i state?
 class Home extends StatelessWidget {
   //user input från secondPage. tas in via Homes konstruktor
   final String userInput;
@@ -78,6 +78,7 @@ class MoreButton extends StatelessWidget {
               title: Text("done"),
               //true
               onTap: () {
+                //print("pressed done");
                 state.filter("done");
                 Navigator.pop(context);
               },
@@ -88,6 +89,7 @@ class MoreButton extends StatelessWidget {
               title: Text("undone"),
               //false
               onTap: () {
+                //print("pressed undone");
                 state.filter("undone");
                 Navigator.pop(context);
               },
@@ -104,12 +106,30 @@ class Model extends ChangeNotifier {
   List dbArr = ["122", "2222", "3222", "apan", "sa", "inget", "112"];
   List<TodoObject> todoList = new List();
 
-//TODO
-//skapa filtrerad lista för varje med en backad lista för för "all" eller where-funktionen?
   filter(String input) {
+    List<TodoObject> backup = List.from(todoList);
     if (input == "all") {
+      //print(input);
+      todoList = List.from(backup.toList());
+      notifyListeners();
+      print("done array: $todoList");
     } else if (input == "done") {
-    } else if (input == "undone") {}
+      Iterable<TodoObject> done = todoList.where((element) {
+        return element.state == true;
+      });
+      //todoList.clear();
+      todoList = List.from(done.toList());
+      notifyListeners();
+      print("done array: $done");
+    } else if (input == "undone") {
+      Iterable<TodoObject> undone = todoList.where((element) {
+        return element.state == false;
+      });
+      //todoList.clear();
+      todoList = List.from(undone.toList());
+      notifyListeners();
+      print("undone array: $undone");
+    }
   }
 
   addUserInputToTodoList(input) {
@@ -130,6 +150,9 @@ class Model extends ChangeNotifier {
     }
   }
 
+//TODO
+//De här stör filtreringen
+//BUGG: Ibland? listan återskapas och läggs på den gamla var gång widgeten återskapas.
 //Skapar objekt av dbArr arrayen och lägger i todoList
 //Byts ut om db-integration?
   createToTodoList() {
@@ -141,15 +164,15 @@ class Model extends ChangeNotifier {
     }
   }
 
+  List get getTodoList {
+    createToTodoList();
+    return todoList;
+  }
+
   void removeFromList(index) {
     dbArr.removeAt(index);
     todoList.removeAt(index);
     notifyListeners();
-  }
-
-  List get getTodoList {
-    createToTodoList();
-    return todoList;
   }
 
   void setValue(input, index) {
@@ -162,7 +185,7 @@ class Model extends ChangeNotifier {
   }
 }
 
-//kalla på addUserINputToTodoList() någonstans?!
+//kalla på addUserInputToTodoList() någonstans?!
 class MyCustomListview extends StatelessWidget {
   final String userInput;
   MyCustomListview({this.userInput});
