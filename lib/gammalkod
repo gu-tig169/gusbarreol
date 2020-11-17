@@ -1,0 +1,333 @@
+
+//Gammal skit
+//stateful
+//-----------------------------
+
+// //"all", "done", "undone" ska vara filter
+// class MoreButton extends StatefulWidget {
+//   @override
+//   _MoreButtonState createState() => _MoreButtonState();
+// }
+
+// //TODO: Hur kalla på metoderna ifrån _MyCustomeListviewState som krävs?
+// class _MoreButtonState extends State<MoreButton> {
+//   //Input == false eller true beroende på vad man vill sortera
+//   // List addToFilterIf(input) {
+//   //   List filteredArr = [];
+//   //   filteredArr.clear();
+
+//   // for (var i = 0; i < dbArr.length; i++) {
+//   //   if (boolArr[i] == input && dbArr.isNotEmpty) {
+//   //     filteredArr.add(dbArr[i]);
+//   //   } else {
+//   //     //print(input.toString() + " i addToFilterIf: ");
+//   //   }
+//   // }
+//   // return filteredArr;
+//   // }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     Icon _icon = Icon(Icons.more_vert);
+//     return PopupMenuButton(
+//       icon: _icon,
+//       itemBuilder: (context) => [
+//         PopupMenuItem(
+//           child: ListTile(
+//             title: Text("all"),
+//             onTap: () {
+//               //setListViewArray(dbArr);
+//               //MyCustomListview(dbArr);
+//               Navigator.pop(context);
+//             },
+//           ),
+//         ),
+//         PopupMenuItem(
+//           child: ListTile(
+//             title: Text("done"),
+//             //true
+//             onTap: () {
+//               //List filteredArr = addToFilterIf(true);
+
+//               //setListViewArray(filteredArr);
+//               Navigator.pop(context);
+//             },
+//           ),
+//         ),
+//         PopupMenuItem(
+//           child: ListTile(
+//             title: Text("undone"),
+//             //false
+//             onTap: () {
+//               //List filteredArr = addToFilterIf(false);
+
+//               //setListViewArray(filteredArr);
+//               Navigator.pop(context);
+//             },
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class MyCustomListview extends StatefulWidget {
+//   @override
+//   _MyCustomListviewState createState() => _MyCustomListviewState();
+// }
+
+// class _MyCustomListviewState extends State<MyCustomListview> {
+//   Text _title;
+//   List dbArr = ["122", "2222", "3222", "apan", "sa", "inget", "112"];
+//   List todoList = new List(); //<-- TodoObjectList
+
+//   @override
+//   Widget build(BuildContext context) {
+//     createObjectAndAddTodoList(dbArr);
+//     return ListView.builder(
+//       itemCount: todoList.length,
+//       itemBuilder: (context, index) {
+//         setTitle(index);
+//         return Card(
+//           margin: EdgeInsets.all(5.0),
+//           child: CheckboxListTile(
+//             value: todoList[index].state,
+//             title: _title,
+//             //on checkbox-press sätt index till true
+//             onChanged: (bool newVal) {
+//               setState(() {
+//                 todoList[index].state = newVal;
+//               });
+//             },
+//             controlAffinity: ListTileControlAffinity.leading,
+//             secondary: IconButton(
+//               icon: Icon(Icons.close),
+//               //On x-press
+//               onPressed: () {
+//                 setState(() {
+//                   removeFromList(index);
+//                 });
+//               },
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+//   // // funkar inte
+//   // void addUserInputToList(input) {
+//   //   if (input != null) {
+//   //     var obj = TodoObject(text: input, state: false);
+//   //     todoList.add(obj);
+//   //   }
+//   // }
+
+//   void removeFromList(index) {
+//     todoList.removeAt(todoList.indexOf(todoList[index]));
+//     dbArr.removeAt(dbArr.indexOf(dbArr[index]));
+//   }
+
+//   //Här kommer det bugga
+//   //listan nollställer sig efter att man kommer tillbaka ifrån addpage
+//   void createObjectAndAddTodoList(inputArr) {
+//     if (todoList.length != inputArr.length) {
+//       for (var i = 0; i < inputArr.length; i++) {
+//         var obj = new TodoObject(text: inputArr[i], state: false);
+//         todoList.add(obj);
+//       }
+//     }
+//   }
+
+//   void setTitle(index) {
+//     //Stryker över text om index är true(icehckad). boolArr är en boolsk array indexerad utefter dbArr.
+//     if (todoList[index].state == true) {
+//       _title = Text(todoList[index].text,
+//           style: TextStyle(decoration: TextDecoration.lineThrough));
+//     } else {
+//       _title = Text(todoList[index].text);
+//     }
+//   }
+// }
+
+//  Här ska listan uppdateras med setState någonstans, WHYYYY GÖR DET INTE DET
+// class MyCustomListview extends StatefulWidget {
+//   MyCustomListview({Key key}) : super(key: key);
+
+//   @override
+//   _MyCustomListviewState createState() => _MyCustomListviewState();
+// }
+
+// class _MyCustomListviewState extends State<MyCustomListview> {
+//   Text _title;
+//   List dbArr = ["122", "2222", "3222", "apan", "sa", "inget", "112"];
+//   List boolArr = new List();
+//   List defaultArr = new List();
+
+//   //  boolArr måste uppdateras i fas med sorteArr. annars sker sorteringen och de får per automatik false.
+//   //putta in true/false i createBoolArray
+//   void createBoolArray(defaultArr) {
+//     //skapa unikt bool-värde för varje index i dbArr
+//     //representerar om den är iklickad eller inte
+//     for (var i = 0; i < defaultArr.length; i++) {
+//       boolArr.add(false);
+//     }
+//   }
+
+//   void createDefaultArr() {
+//     //kopierar enbart dbArr om de inte är lika långa
+//     // if (defaultArr.length != dbArr.length) {
+//     //   for (var i = 0; i < dbArr.length; i++) {
+//     //     defaultArr.add(dbArr[i]);
+//     //   }
+//     // }
+//     defaultArr = List.from(dbArr);
+//   }
+
+//   void setListViewArray(inputArr) {
+//     if (inputArr == null) {
+//       print("NULL ROW 193");
+//     } else if (inputArr.length > 0) {
+//       dbArr = inputArr;
+//       //return inputArr;
+//     }
+//   }
+
+//   List getListViewArray() {
+//     return defaultArr;
+//   }
+
+//   //Lägger till användare i dbArr beroende på de kriterier under ifrån secondPage.
+//   //dbArr ska bytas ut mot db-integration när det SKA GOERASSSSSS då det är utifrån den listviewbuilder skapar första vyn
+//   void addUserInputTodbArr(input) {
+//     if (input != null && input.isNotEmpty) {
+//       dbArr.add(input);
+//       boolArr.add(false);
+//     } else if (input == null) {
+//       //print("NULL row 142");
+//     }
+//   }
+
+//   Text checkForNullAndAssignArray(index, defaultArr) {
+//     var _title;
+//     //kolla efter NULL-värde innan itembuilder skapar den till listview.
+//     if (defaultArr[index] == null) {
+//       //print("NULL ROW 233, Main.dart");
+//     } else if (defaultArr[index].isEmpty) {
+//       //print("EMPTY ROW 235");
+//     } else if (defaultArr[index] != null && defaultArr[index].isNotEmpty) {
+//       //print("row 237: " + dbArr[index].toString());
+
+//       _title = Text(defaultArr[index]);
+//     }
+//     return _title;
+//   }
+
+//   //beter sig konstigt men kvittar när jag skapar objekt istället för array
+//   void removeFromList(index) {
+//     defaultArr.removeAt(defaultArr.indexOf(defaultArr[index]));
+//     dbArr.removeAt(dbArr.indexOf(dbArr[index]));
+//     boolArr.removeAt(boolArr.indexOf(boolArr[index]));
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     createDefaultArr();
+
+//     setState(() {
+//       defaultArr = getListViewArray();
+//     });
+
+//     createBoolArray(defaultArr);
+
+//     return ListView.builder(
+//       itemCount: defaultArr.length,
+//       itemBuilder: (context, index) {
+//         _title = checkForNullAndAssignArray(index, defaultArr);
+
+//         //Stryker över text om index är true(icehckad). boolArr är en boolsk array indexerad utefter dbArr.
+//         if (boolArr[index] == true) {
+//           _title = Text(defaultArr[index],
+//               style: TextStyle(decoration: TextDecoration.lineThrough));
+//         }
+
+//         return Card(
+//           margin: EdgeInsets.all(5.0),
+//           child: CheckboxListTile(
+//             value: boolArr[index],
+//             title: _title,
+//             //on checkbox-press sätt index till true
+//             onChanged: (bool newVal) {
+//               setState(() {
+//                 boolArr[index] = newVal;
+//               });
+//             },
+//             controlAffinity: ListTileControlAffinity.leading,
+//             secondary: IconButton(
+//               icon: Icon(Icons.close),
+//               //On x-press
+//               onPressed: () {
+//                 setState(() {
+//                   removeFromList(index);
+//                 });
+//               },
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+
+// //ej dynamisk lista
+// class ListView extends StatefulWidget {
+//   @override
+//   _ListViewState createState() => _ListViewState();
+// }
+
+// class _ListViewState extends State<ListView> {
+//   bool _isSet = false;
+//   Text _title = Text("apa1");
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListView(
+//       children: [
+//         CheckboxListTile(
+//           secondary: IconButton(
+//             icon: Icon(Icons.close),
+//             onPressed: () {
+//               print("APA");
+//             },
+//           ),
+//           controlAffinity: ListTileControlAffinity.leading,
+//           value: _isSet,
+//           onChanged: (bool newVal) {
+//             setState(
+//               () {
+//                 _isSet = newVal;
+//                 if (_isSet == true) {
+//                   _title = Text(
+//                     "apa1",
+//                     style: TextStyle(decoration: TextDecoration.lineThrough),
+//                   );
+//                 } else {
+//                   _title = Text("apa1");
+//                 }
+//               },
+//             );
+//           },
+//           title: _title,
+//         ),
+//         CheckboxListTile(
+//           value: false,
+//           onChanged: null,
+//           title: Text("apa2"),
+//         ),
+//         CheckboxListTile(
+//           value: false,
+//           onChanged: null,
+//           title: Text("apa3"),
+//         ),
+//       ],
+//     );
+//   }
+// }
