@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
 
 import 'package:todo_list/secondPage.dart';
@@ -63,12 +62,12 @@ class Home extends StatelessWidget {
                 showSecondsDigit: false,
               ),
               SizedBox(
-                height: 40,
+                height: 20,
               ),
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  "Idag är det den ${dateParse.day} i ${dateParse.month}, ${dateParse.year}.",
+                  "Idag är det den ${dateParse.day} i ${dateParse.month}, ${dateParse.year} och det här är dina TODOs.",
                   style: TextStyle(fontSize: 20, fontFamily: 'Raleway'),
                 ),
               ),
@@ -119,7 +118,7 @@ class MoreButton extends StatelessWidget {
               onTap: () {
                 state.filter("all");
                 Navigator.pop(context);
-                _myFlutterToast("all");
+                state.myFlutterToast("Showing All");
               },
             ),
           ),
@@ -131,7 +130,7 @@ class MoreButton extends StatelessWidget {
                 //print("pressed done");
                 state.filter("done");
                 Navigator.pop(context);
-                _myFlutterToast("done");
+                state.myFlutterToast("Showing Done");
               },
             ),
           ),
@@ -143,23 +142,12 @@ class MoreButton extends StatelessWidget {
                 //print("pressed undone");
                 state.filter("undone");
                 Navigator.pop(context);
-                _myFlutterToast("undone");
+                state.myFlutterToast("Showing Undone");
               },
             ),
           ),
         ],
       ),
-    );
-  }
-
-  _myFlutterToast(input) {
-    return Fluttertoast.showToast(
-      msg: "Showing $input",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.grey,
-      textColor: Colors.black,
-      fontSize: 16.0,
     );
   }
 }

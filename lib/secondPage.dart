@@ -36,17 +36,23 @@ class AddTaskPage extends StatelessWidget {
                 controller: inputController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: "What are you going to do?",
+                  labelText: "Skriv här:",
                 ),
               ),
               SizedBox(height: 20),
               FlatButton.icon(
                 onPressed: () {
                   //Här ska poppas istället för pusha nytt objekt på stacken
-                  Navigator.pop(context, inputController.text);
+                  // Navigator.pop(context, inputController.text);
+                  if (inputController.text == "") {
+                    state.myFlutterToast(
+                        "Skriv något i rutan för att lägga till en TODO.");
+                  } else {
+                    Navigator.pop(context, inputController.text);
+                  }
                 },
                 icon: Icon(Icons.add),
-                label: Text("Add"),
+                label: Text("Lägg till"),
               ),
             ],
           ),

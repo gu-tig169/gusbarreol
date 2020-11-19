@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:todo_list/todoObject.dart';
 
@@ -22,7 +23,6 @@ class Model extends ChangeNotifier {
       Iterable<TodoObject> done = todoList.where((element) {
         return element.state == true;
       }).toList();
-      print("doneList: $done");
 
       filteredList = List.from(done);
       notifyListeners();
@@ -33,7 +33,6 @@ class Model extends ChangeNotifier {
       Iterable<TodoObject> undone = todoList.where((element) {
         return element.state == false;
       }).toList();
-      print("undonelist:  $undone");
 
       filteredList = List.from(undone);
       notifyListeners();
@@ -103,5 +102,16 @@ class Model extends ChangeNotifier {
     } else {
       return false;
     }
+  }
+
+  myFlutterToast(input) {
+    return Fluttertoast.showToast(
+      msg: input,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.grey.shade300,
+      textColor: Colors.black,
+      fontSize: 16.0,
+    );
   }
 }
