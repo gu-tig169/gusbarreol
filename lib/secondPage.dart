@@ -1,15 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:todo_list/main.dart';
+import 'package:todo_list/Model.dart';
 
 //hämtar data från textcontainer och skicka till testArr i main
 class AddTaskPage extends StatelessWidget {
+  final TextEditingController inputController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController inputController = TextEditingController();
-    return Scaffold(
-      appBar: _mySecondPageAppBar(),
-      body: Center(
+    return ChangeNotifierProvider(
+      create: (context) => Model(),
+      builder: (context, child) => Scaffold(
+        appBar: _mySecondPageAppBar(),
+        body: _mySecondPageBody(context),
+      ),
+    );
+  }
+
+  Widget _mySecondPageAppBar() {
+    return AppBar(
+      title: Text("TODO"),
+      centerTitle: true,
+    );
+  }
+
+  Widget _mySecondPageBody(context) {
+    return Consumer<Model>(
+      builder: (context, state, child) => Center(
         child: Container(
           padding: EdgeInsets.fromLTRB(20, 70, 20, 20),
           child: Column(
@@ -24,15 +42,8 @@ class AddTaskPage extends StatelessWidget {
               SizedBox(height: 20),
               FlatButton.icon(
                 onPressed: () {
-                  inputController
-                      .toString(); //<-- set toString här för att slippa bugg i main
-                  //print("inputController: " + inputController.text);
-
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              Home(userInput: inputController.text)));
+                  //Här ska poppas istället för pusha nytt objekt på stacken
+                  Navigator.pop(context, inputController.text);
                 },
                 icon: Icon(Icons.add),
                 label: Text("Add"),
@@ -41,13 +52,6 @@ class AddTaskPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _mySecondPageAppBar() {
-    return AppBar(
-      title: Text("TIG169"),
-      centerTitle: true,
     );
   }
 }
