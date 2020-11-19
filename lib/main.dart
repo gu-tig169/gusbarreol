@@ -157,43 +157,49 @@ class MyCustomListview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<Model>(
-        builder: (context, state, child) =>
-            Provider.of<Model>(context, listen: false).todoListIsEmpty()
-                ? ListView.builder(
+      builder: (context, state, child) =>
+          Provider.of<Model>(context, listen: false).todoListIsEmpty()
+              ? Scrollbar(
+                  child: ListView.builder(
                     itemCount: state.getTodoList.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        height: 80,
-                        child: Card(
-                          color: Color.fromRGBO(207, 216, 220, 0.8),
-                          margin: EdgeInsets.fromLTRB(40, 15, 40, 0),
-                          child: Center(
-                            child: CheckboxListTile(
-                              value: state.getValue(index, state.getTodoList),
-                              title: state.getTitle(index, state.getTodoList),
-                              //on checkbox-press sätt index till true
-                              onChanged: (bool newVal) {
-                                state.setValue(
-                                    newVal, index, state.getTodoList);
-                              },
-                              controlAffinity: ListTileControlAffinity.leading,
-                              secondary: IconButton(
-                                icon: Icon(Icons.close),
-                                //On x-press
-                                onPressed: () {
-                                  state.removeFromList(
-                                      index, state.getTodoList);
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
+                      return _myListContainer(context, index, state);
                     },
-                  )
-                : Center(
-                    child: Text(
-                        "Listan är tom :) \n\nLägg till med plusset i högra hörnet."),
-                  ));
+                  ),
+                )
+              : Center(
+                  child: Text(
+                      "Listan är tom :) \n\nLägg till med plusset i högra hörnet.",
+                      style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
+                ),
+    );
+  }
+
+  Widget _myListContainer(context, index, state) {
+    return Container(
+      height: 80,
+      child: Card(
+        color: Color.fromRGBO(207, 216, 220, 0.8),
+        margin: EdgeInsets.fromLTRB(40, 15, 40, 0),
+        child: Center(
+          child: CheckboxListTile(
+            value: state.getValue(index, state.getTodoList),
+            title: state.getTitle(index, state.getTodoList),
+            //on checkbox-press sätt index till true
+            onChanged: (bool newVal) {
+              state.setValue(newVal, index, state.getTodoList);
+            },
+            controlAffinity: ListTileControlAffinity.leading,
+            secondary: IconButton(
+              icon: Icon(Icons.close),
+              //On x-press
+              onPressed: () {
+                state.removeFromList(index, state.getTodoList);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
