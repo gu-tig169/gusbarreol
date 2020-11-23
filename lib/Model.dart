@@ -4,8 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:todo_list/todoObject.dart';
 
 class Model extends ChangeNotifier {
-  bool value = false;
-  //List dbArr = ["122", "2222", "3222", "apan", "sa", "inget", "112"];
   List<TodoObject> todoList = new List();
 
   List<TodoObject> filteredList = new List();
@@ -50,24 +48,10 @@ class Model extends ChangeNotifier {
     }
   }
 
-// //Skapar objekt av dbArr arrayen och lägger i todoList
-// //Byts ut om db-integration?
-//   createToTodoList() {
-//     if (todoList.length != dbArr.length) {
-//       for (var i = 0; i < dbArr.length; i++) {
-//         var obj = new TodoObject(text: dbArr[i], state: false);
-//         todoList.add(obj);
-//       }
-//     }
-//   }
-
   addUserInputToTodoList(input) {
-    //print(input);
     if (input != null && input != "") {
-      //dbArr.add(input);
       TodoObject obj = new TodoObject(text: input, state: false);
       todoList.add(obj);
-      //print("TodoList length in adduser: ${todoList.length}");
       notifyListeners();
     } else {
       //print("TRIED TO ADD NULL TO TODOLIST");
@@ -82,7 +66,6 @@ class Model extends ChangeNotifier {
   }
 
   void removeFromList(index, list) {
-    //dbArr.removeAt(index);
     list.removeAt(index);
     notifyListeners();
   }

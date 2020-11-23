@@ -152,26 +152,24 @@ class MoreButton extends StatelessWidget {
   }
 }
 
-//tar emot
 class MyCustomListview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<Model>(
-      builder: (context, state, child) =>
-          Provider.of<Model>(context, listen: false).todoListIsEmpty()
-              ? Scrollbar(
-                  child: ListView.builder(
-                    itemCount: state.getTodoList.length,
-                    itemBuilder: (context, index) {
-                      return _myListContainer(context, index, state);
-                    },
-                  ),
-                )
-              : Center(
-                  child: Text(
-                      "Listan är tom :) \n\nLägg till med plusset i högra hörnet.",
-                      style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
-                ),
+      builder: (context, state, child) => state.todoListIsEmpty()
+          ? Scrollbar(
+              child: ListView.builder(
+                itemCount: state.getTodoList.length,
+                itemBuilder: (context, index) {
+                  return _myListContainer(context, index, state);
+                },
+              ),
+            )
+          : Center(
+              child: Text(
+                  "Listan är tom :) \n\nLägg till med plusset i högra hörnet.",
+                  style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
+            ),
     );
   }
 
