@@ -3,10 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
 
 import 'package:todo_list/secondPage.dart';
-import 'package:todo_list/Model.dart';
+import 'package:todo_list/Model/Model.dart';
 
 void main() {
-  runApp(Home());
+  runApp(ChangeNotifierProvider(
+      create: (context) => Model(), builder: (context, child) => Home()));
 }
 
 //TODO
@@ -19,19 +20,16 @@ class Home extends StatelessWidget {
       theme: ThemeData(
         appBarTheme: AppBarTheme(color: Color.fromRGBO(69, 90, 100, 1)),
       ),
-      home: ChangeNotifierProvider(
-        create: (context) => Model(),
-        builder: (context, child) => Scaffold(
-          appBar: _myHomeAppBar(),
-          body: Column(
-            children: [
-              _myDateContainer(),
-              Divider(height: 30),
-              Expanded(child: MyCustomListview()),
-            ],
-          ),
-          floatingActionButton: _myHomeFloatingActionButton(),
+      home: Scaffold(
+        appBar: _myHomeAppBar(),
+        body: Column(
+          children: [
+            _myDateContainer(),
+            Divider(height: 30),
+            Expanded(child: MyCustomListview()),
+          ],
         ),
+        floatingActionButton: _myHomeFloatingActionButton(),
       ),
     );
   }
@@ -41,7 +39,7 @@ class Home extends StatelessWidget {
     var dateParse = DateTime.parse(date);
 
     return SizedBox(
-      height: 150,
+      height: 153,
       child: Container(
           color: Colors.grey.shade300,
           width: 1000000,
@@ -67,7 +65,7 @@ class Home extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  "Idag är det den ${dateParse.day} i ${dateParse.month}, ${dateParse.year} och det här är dina TODOs.",
+                  "Idag är det den ${dateParse.day} i ${dateParse.month}, ${dateParse.year} och det här är dina TODOs:",
                   style: TextStyle(fontSize: 20, fontFamily: 'Raleway'),
                 ),
               ),
@@ -93,7 +91,6 @@ class Home extends StatelessWidget {
         onPressed: () async {
           final userInput = await Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddTaskPage()));
-          //print("userInput i home(): $userInput");
           //pushar på userInput på listan
           Provider.of<Model>(context, listen: false)
               .addUserInputToTodoList(userInput);
@@ -127,7 +124,6 @@ class MoreButton extends StatelessWidget {
               title: Text("done"),
               //true
               onTap: () {
-                //print("pressed done");
                 state.filter("done");
                 Navigator.pop(context);
                 state.myFlutterToast("Showing Done");
@@ -139,7 +135,6 @@ class MoreButton extends StatelessWidget {
               title: Text("undone"),
               //false
               onTap: () {
-                //print("pressed undone");
                 state.filter("undone");
                 Navigator.pop(context);
                 state.myFlutterToast("Showing Undone");
@@ -161,7 +156,7 @@ class MyCustomListview extends StatelessWidget {
               child: ListView.builder(
                 itemCount: state.getTodoList.length,
                 itemBuilder: (context, index) {
-                  return _myListContainer(context, index, state);
+                  return _myListContainer(index, state);
                 },
               ),
             )
@@ -173,7 +168,7 @@ class MyCustomListview extends StatelessWidget {
     );
   }
 
-  Widget _myListContainer(context, index, state) {
+  Widget _myListContainer(index, state) {
     return Container(
       height: 80,
       child: Card(

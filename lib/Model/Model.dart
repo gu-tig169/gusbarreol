@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:todo_list/todoObject.dart';
+import 'package:todo_list/Model/todoObject.dart';
+import '../DB/DB.dart';
 
 class Model extends ChangeNotifier {
   List<TodoObject> todoList = new List();
@@ -9,12 +10,19 @@ class Model extends ChangeNotifier {
   List<TodoObject> filteredList = new List();
   bool filterList = false;
 
+  // // Kallas på vid initieringen av appen(changenotifierprovider).
+  Model() {
+    //DB.getData();
+    //DB.postData();
+    //DB.deleteTodoData();
+    //DB.putData();
+  }
+
   filter(String input) {
     if (input == "all") {
       filterList = false;
       todoList = List.from(todoList);
       notifyListeners();
-      //print("all array: $todoList");
     } else if (input == "done") {
       filterList = true;
       filteredList.clear();
@@ -24,7 +32,6 @@ class Model extends ChangeNotifier {
 
       filteredList = List.from(done);
       notifyListeners();
-      //print("done array: $done");
     } else if (input == "undone") {
       filterList = true;
       filteredList.clear();
@@ -34,7 +41,6 @@ class Model extends ChangeNotifier {
 
       filteredList = List.from(undone);
       notifyListeners();
-      //print("undone array: $undone");
     }
   }
 
