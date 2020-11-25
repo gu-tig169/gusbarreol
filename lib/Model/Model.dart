@@ -5,17 +5,31 @@ import 'package:todo_list/Model/todoObject.dart';
 import '../DB/DB.dart';
 
 class Model extends ChangeNotifier {
-  List<TodoObject> todoList = new List();
+  List<TodoObject> todoList = List();
 
   List<TodoObject> filteredList = new List();
   bool filterList = false;
 
-  // // Kallas på vid initieringen av appen(changenotifierprovider).
+  // Kallas på vid initieringen av appen(changenotifierprovider).
   Model() {
-    //DB.getData();
-    //DB.postData();
-    //DB.deleteTodoData();
-    //DB.putData();
+    _syncLists();
+  }
+
+  //TODO
+  //FExa en snögg loader bramski
+  void _syncLists() async {
+    print("working...");
+    todoList = await DB.getData();
+    notifyListeners();
+    print("DONE!");
+  }
+
+  List get getTodoList {
+    if (filterList == true) {
+      return filteredList;
+    }
+
+    return todoList;
   }
 
   filter(String input) {
@@ -46,17 +60,20 @@ class Model extends ChangeNotifier {
 
   getTitle(index, list) {
     //Sträckar över om state==true
-    if (list[index].state == false) {
+    if (list[index].state == false && list[index].text != null) {
       return Text(list[index].text);
-    } else if (list[index].state == true) {
+    } else if (list[index].state == true && list[index].text != null) {
       return Text(list[index].text,
           style: TextStyle(decoration: TextDecoration.lineThrough));
+    } else {
+      print("GETTITLE(): tried to add null-text to list");
     }
   }
 
   addUserInputToTodoList(input) {
     if (input != null && input != "") {
       TodoObject obj = new TodoObject(text: input, state: false);
+      DB.postData(input, false);
       todoList.add(obj);
       notifyListeners();
     } else {
@@ -64,19 +81,14 @@ class Model extends ChangeNotifier {
     }
   }
 
-  List get getTodoList {
-    if (filterList == true) {
-      return filteredList;
-    }
-    return todoList;
-  }
-
   void removeFromList(index, list) {
+    DB.deleteTodoData(list[index].id);
     list.removeAt(index);
     notifyListeners();
   }
 
   void setValue(input, index, list) {
+    DB.putData(list[index].id, list[index].text, input);
     list[index].state = input;
     notifyListeners();
   }

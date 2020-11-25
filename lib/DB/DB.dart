@@ -1,61 +1,64 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:todo_list/Model/todoObject.dart';
+
 class DB {
   //API-key: eb31ade7-d837-4c17-8d19-31aae0474e89
 
-  //fönkar
-  static void getData() async {
+  //serializear JSONlistan till en lista med TodoObject.
+  static getData() async {
     var url =
         "https://todoapp-api-vldfm.ondigitalocean.app/todos?key=eb31ade7-d837-4c17-8d19-31aae0474e89";
 
     http.Response response = await http.get(url);
-    var content = response.body;
-    List todoList = json.decode(content);
-    print(todoList.length);
+
+    Iterable l = json.decode(response.body);
+
+    List<TodoObject> todoList =
+        (l as List).map((e) => TodoObject.fromJson(e)).toList();
+
+    return todoList;
   }
 
-  //Fönkar
-  static void postData() async {
+  static void postData(String text, bool state) {
     var url =
         "https://todoapp-api-vldfm.ondigitalocean.app/todos?key=eb31ade7-d837-4c17-8d19-31aae0474e89";
 
-    http.Response response = await http.post(url,
+    http.post(url,
         headers: <String, String>{"Content-Type": "application/json"},
-        body: jsonEncode(
-            <String, String>{'title': "test", "done": false.toString()}));
+        body: jsonEncode(<String, dynamic>{'title': text, "done": state}));
 
-    print(response.body);
+    //print(response.body);
+    //http.Response response = await
   }
 
-  //Fönkar
-  static void deleteTodoData() async {
-    var id = "f105961b-ac39-4294-9bda-f87ee198c935";
+  static void deleteTodoData(String id) {
+    //var id = "61e3ef58-2153-4ed3-a0ea-464fd7bac9af";
     var url =
         "https://todoapp-api-vldfm.ondigitalocean.app/todos/$id?key=eb31ade7-d837-4c17-8d19-31aae0474e89";
 
-    http.Response response = await http.delete(
+    http.delete(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
     );
-    print(jsonDecode(response.body));
+    //print(jsonDecode(response.body));
+    //http.Response response = await
   }
 
-  //Fönkar
-  static void putData() {
-    var id = "79e0ccea-45b1-452f-8651-e8a7b7889e02";
+  static void putData(String id, String text, bool state) {
     var url =
         "https://todoapp-api-vldfm.ondigitalocean.app/todos/$id?key=eb31ade7-d837-4c17-8d19-31aae0474e89";
 
-    Future<http.Response> response = http.put(
+    http.put(
       url,
       headers: <String, String>{"Content-Type": "application/json"},
-      body: jsonEncode(
-          <String, String>{'title': "APA", "done": false.toString()}),
+      body: jsonEncode(<String, dynamic>{"title": text, "done": state}),
     );
 
-    print(response.toString());
+    //print(response.toString());
+    //Future<http.Response> response =
   }
 }

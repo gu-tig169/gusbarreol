@@ -11,7 +11,8 @@ void main() {
 }
 
 //TODO
-//1. Fixa databasgrejerna
+//1. fråga hur man brukar bygga upp koden. är det dumt att ha en lokal lista man syncar med sitt api-anrop?
+//alltså lägger till/tar bort/modifierar allt både lokalt och till apiet
 
 class Home extends StatelessWidget {
   @override
