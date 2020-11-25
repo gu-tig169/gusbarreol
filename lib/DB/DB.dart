@@ -28,9 +28,6 @@ class DB {
     http.post(url,
         headers: <String, String>{"Content-Type": "application/json"},
         body: jsonEncode(<String, dynamic>{'title': text, "done": state}));
-
-    //print(response.body);
-    //http.Response response = await
   }
 
   static void deleteTodoData(String id) {
@@ -44,8 +41,6 @@ class DB {
         'Content-Type': 'application/json; charset=UTF-8'
       },
     );
-    //print(jsonDecode(response.body));
-    //http.Response response = await
   }
 
   static void putData(String id, String text, bool state) {
@@ -57,8 +52,5 @@ class DB {
       headers: <String, String>{"Content-Type": "application/json"},
       body: jsonEncode(<String, dynamic>{"title": text, "done": state}),
     );
-
-    //print(response.toString());
-    //Future<http.Response> response =
   }
 }

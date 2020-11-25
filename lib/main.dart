@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:todo_list/secondPage.dart';
 import 'package:todo_list/Model/Model.dart';
@@ -9,10 +10,6 @@ void main() {
   runApp(ChangeNotifierProvider(
       create: (context) => Model(), builder: (context, child) => Home()));
 }
-
-//TODO
-//1. fråga hur man brukar bygga upp koden. är det dumt att ha en lokal lista man syncar med sitt api-anrop?
-//alltså lägger till/tar bort/modifierar allt både lokalt och till apiet
 
 class Home extends StatelessWidget {
   @override
@@ -152,7 +149,7 @@ class MyCustomListview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<Model>(
-      builder: (context, state, child) => state.todoListIsEmpty()
+      builder: (context, state, child) => state.syncingLists == false
           ? Scrollbar(
               child: ListView.builder(
                 itemCount: state.getTodoList.length,
@@ -162,12 +159,39 @@ class MyCustomListview extends StatelessWidget {
               ),
             )
           : Center(
-              child: Text(
-                  "Listan är tom :) \n\nLägg till med plusset i högra hörnet.",
-                  style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
+              child: SpinKitChasingDots(
+                color: Color.fromRGBO(69, 90, 100, 1),
+                size: 50.0,
+              ),
             ),
     );
   }
+
+  // // Visar tom om listan är tom annars laddhjul
+  // Widget checkListIfEmpty(state) {
+  //   if (state.syncingLists == false) {
+  //     return Scrollbar(
+  //       child: ListView.builder(
+  //         itemCount: state.getTodoList.length,
+  //         itemBuilder: (context, index) {
+  //           return _myListContainer(index, state);
+  //         },
+  //       ),
+  //     );
+  //   } else if (state.syncingLists == false && state.todoListIsEmpty()) {
+  //     return Text(
+  //       "Listan är tom :) \n\nLägg till med plusset i högra hörnet.",
+  //       style: TextStyle(fontSize: 20, fontFamily: 'Raleway'),
+  //     );
+  //   } else {
+  //     return Center(
+  //       child: SpinKitRotatingCircle(
+  //         color: Color.fromRGBO(69, 90, 100, 1),
+  //         size: 50.0,
+  //       ),
+  //     );
+  //   }
+  // }
 
   Widget _myListContainer(index, state) {
     return Container(

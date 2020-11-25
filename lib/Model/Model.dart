@@ -10,18 +10,21 @@ class Model extends ChangeNotifier {
   List<TodoObject> filteredList = new List();
   bool filterList = false;
 
+  bool syncingLists = true;
+
   // Kallas på vid initieringen av appen(changenotifierprovider).
   Model() {
     _syncLists();
   }
 
-  //TODO
-  //FExa en snögg loader bramski
+  //Syncar locala todoList med den DB hämtar
   void _syncLists() async {
     print("working...");
+    syncingLists = true;
     todoList = await DB.getData();
     notifyListeners();
     print("DONE!");
+    syncingLists = false;
   }
 
   List get getTodoList {
@@ -77,7 +80,7 @@ class Model extends ChangeNotifier {
       todoList.add(obj);
       notifyListeners();
     } else {
-      //print("TRIED TO ADD NULL TO TODOLIST");
+      print("ADDUSERINPUTTOTODOLIST: Tried to add null to todoList");
     }
   }
 
