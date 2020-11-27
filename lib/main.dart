@@ -113,7 +113,6 @@ class MoreButton extends StatelessWidget {
               onTap: () {
                 state.filter("all");
                 Navigator.pop(context);
-                state.myFlutterToast("Showing All");
               },
             ),
           ),
@@ -124,7 +123,6 @@ class MoreButton extends StatelessWidget {
               onTap: () {
                 state.filter("done");
                 Navigator.pop(context);
-                state.myFlutterToast("Showing Done");
               },
             ),
           ),
@@ -135,7 +133,6 @@ class MoreButton extends StatelessWidget {
               onTap: () {
                 state.filter("undone");
                 Navigator.pop(context);
-                state.myFlutterToast("Showing Undone");
               },
             ),
           ),

@@ -39,6 +39,7 @@ class Model extends ChangeNotifier {
     if (input == "all") {
       filterList = false;
       todoList = List.from(todoList);
+      myFlutterToast("Visar alla");
       notifyListeners();
     } else if (input == "done") {
       filterList = true;
@@ -47,8 +48,13 @@ class Model extends ChangeNotifier {
         return element.state == true;
       }).toList();
 
-      filteredList = List.from(done);
-      notifyListeners();
+      if (done.isEmpty) {
+        myFlutterToast("Du har inga avklarade todos din lathund.");
+      } else {
+        filteredList = List.from(done);
+        myFlutterToast("Visar avklarade");
+        notifyListeners();
+      }
     } else if (input == "undone") {
       filterList = true;
       filteredList.clear();
@@ -56,8 +62,13 @@ class Model extends ChangeNotifier {
         return element.state == false;
       }).toList();
 
-      filteredList = List.from(undone);
-      notifyListeners();
+      if (undone.isEmpty) {
+        myFlutterToast("Alla dina todos är avklarade, snyggt!");
+      } else {
+        filteredList = List.from(undone);
+        myFlutterToast("Visar ej avklarade");
+        notifyListeners();
+      }
     }
   }
 
@@ -75,25 +86,22 @@ class Model extends ChangeNotifier {
 
   addUserInputToTodoList(input) {
     if (input != null && input != "") {
-      TodoObject obj = new TodoObject(text: input, state: false);
+      //TodoObject obj = new TodoObject(text: input, state: false);
       DB.postData(input, false);
-      todoList.add(obj);
-      notifyListeners();
+      _syncLists();
     } else {
-      print("ADDUSERINPUTTOTODOLIST: Tried to add null to todoList");
+      print("ADDUSERINPUTTOTODOLIST(): Tried to add null to todoList");
     }
   }
 
   void removeFromList(index, list) {
     DB.deleteTodoData(list[index].id);
-    list.removeAt(index);
-    notifyListeners();
+    _syncLists();
   }
 
   void setValue(input, index, list) {
     DB.putData(list[index].id, list[index].text, input);
-    list[index].state = input;
-    notifyListeners();
+    _syncLists();
   }
 
   bool getValue(index, list) {
