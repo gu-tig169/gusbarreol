@@ -1,22 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:todo_list/todoObject.dart';
+import 'package:todo_list/Model/todoObject.dart';
+import '../DB/DB.dart';
 
 class Model extends ChangeNotifier {
-  bool value = false;
-  //List dbArr = ["122", "2222", "3222", "apan", "sa", "inget", "112"];
-  List<TodoObject> todoList = new List();
+  List<TodoObject> todoList = List();
 
   List<TodoObject> filteredList = new List();
   bool filterList = false;
+
+  bool syncingLists = true;
+
+  // Kallas på vid initieringen av appen(changenotifierprovider).
+  Model() {
+    _syncLists();
+  }
+
+  //Syncar locala todoList med den DB hämtar
+  void _syncLists() async {
+    print("working...");
+    syncingLists = true;
+    todoList = await DB.getData();
+    notifyListeners();
+    print("DONE!");
+    syncingLists = false;
+  }
+
+  List get getTodoList {
+    if (filterList == true) {
+      return filteredList;
+    }
+
+    return todoList;
+  }
 
   filter(String input) {
     if (input == "all") {
       filterList = false;
       todoList = List.from(todoList);
+      myFlutterToast("Visar alla");
       notifyListeners();
-      //print("all array: $todoList");
     } else if (input == "done") {
       filterList = true;
       filteredList.clear();
@@ -24,9 +48,13 @@ class Model extends ChangeNotifier {
         return element.state == true;
       }).toList();
 
-      filteredList = List.from(done);
-      notifyListeners();
-      //print("done array: $done");
+      if (done.isEmpty) {
+        myFlutterToast("Du har inga avklarade todos din lathund.");
+      } else {
+        filteredList = List.from(done);
+        myFlutterToast("Visar avklarade");
+        notifyListeners();
+      }
     } else if (input == "undone") {
       filterList = true;
       filteredList.clear();
@@ -34,62 +62,46 @@ class Model extends ChangeNotifier {
         return element.state == false;
       }).toList();
 
-      filteredList = List.from(undone);
-      notifyListeners();
-      //print("undone array: $undone");
+      if (undone.isEmpty) {
+        myFlutterToast("Alla dina todos är avklarade, snyggt!");
+      } else {
+        filteredList = List.from(undone);
+        myFlutterToast("Visar ej avklarade");
+        notifyListeners();
+      }
     }
   }
 
   getTitle(index, list) {
     //Sträckar över om state==true
-    if (list[index].state == false) {
+    if (list[index].state == false && list[index].text != null) {
       return Text(list[index].text);
-    } else if (list[index].state == true) {
+    } else if (list[index].state == true && list[index].text != null) {
       return Text(list[index].text,
           style: TextStyle(decoration: TextDecoration.lineThrough));
+    } else {
+      print("GETTITLE(): tried to add null-text to list");
     }
   }
-
-// //Skapar objekt av dbArr arrayen och lägger i todoList
-// //Byts ut om db-integration?
-//   createToTodoList() {
-//     if (todoList.length != dbArr.length) {
-//       for (var i = 0; i < dbArr.length; i++) {
-//         var obj = new TodoObject(text: dbArr[i], state: false);
-//         todoList.add(obj);
-//       }
-//     }
-//   }
 
   addUserInputToTodoList(input) {
-    //print(input);
     if (input != null && input != "") {
-      //dbArr.add(input);
-      TodoObject obj = new TodoObject(text: input, state: false);
-      todoList.add(obj);
-      //print("TodoList length in adduser: ${todoList.length}");
-      notifyListeners();
+      //TodoObject obj = new TodoObject(text: input, state: false);
+      DB.postData(input, false);
+      _syncLists();
     } else {
-      //print("TRIED TO ADD NULL TO TODOLIST");
+      print("ADDUSERINPUTTOTODOLIST(): Tried to add null to todoList");
     }
-  }
-
-  List get getTodoList {
-    if (filterList == true) {
-      return filteredList;
-    }
-    return todoList;
   }
 
   void removeFromList(index, list) {
-    //dbArr.removeAt(index);
-    list.removeAt(index);
-    notifyListeners();
+    DB.deleteTodoData(list[index].id);
+    _syncLists();
   }
 
   void setValue(input, index, list) {
-    list[index].state = input;
-    notifyListeners();
+    DB.putData(list[index].id, list[index].text, input);
+    _syncLists();
   }
 
   bool getValue(index, list) {

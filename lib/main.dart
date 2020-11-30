@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_digital_clock/slide_digital_clock.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:todo_list/secondPage.dart';
-import 'package:todo_list/Model.dart';
+import 'package:todo_list/Model/Model.dart';
 
 void main() {
-  runApp(Home());
+  runApp(ChangeNotifierProvider(
+      create: (context) => Model(), builder: (context, child) => Home()));
 }
-
-//TODO
-//1. Fixa databasgrejerna
 
 class Home extends StatelessWidget {
   @override
@@ -19,19 +18,16 @@ class Home extends StatelessWidget {
       theme: ThemeData(
         appBarTheme: AppBarTheme(color: Color.fromRGBO(69, 90, 100, 1)),
       ),
-      home: ChangeNotifierProvider(
-        create: (context) => Model(),
-        builder: (context, child) => Scaffold(
-          appBar: _myHomeAppBar(),
-          body: Column(
-            children: [
-              _myDateContainer(),
-              Divider(height: 30),
-              Expanded(child: MyCustomListview()),
-            ],
-          ),
-          floatingActionButton: _myHomeFloatingActionButton(),
+      home: Scaffold(
+        appBar: _myHomeAppBar(),
+        body: Column(
+          children: [
+            _myDateContainer(),
+            Divider(height: 30),
+            Expanded(child: MyCustomListview()),
+          ],
         ),
+        floatingActionButton: _myHomeFloatingActionButton(),
       ),
     );
   }
@@ -41,7 +37,7 @@ class Home extends StatelessWidget {
     var dateParse = DateTime.parse(date);
 
     return SizedBox(
-      height: 150,
+      height: 153,
       child: Container(
           color: Colors.grey.shade300,
           width: 1000000,
@@ -67,7 +63,7 @@ class Home extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  "Idag är det den ${dateParse.day} i ${dateParse.month}, ${dateParse.year} och det här är dina TODOs.",
+                  "Idag är det den ${dateParse.day} i ${dateParse.month}, ${dateParse.year} och det här är dina TODOs:",
                   style: TextStyle(fontSize: 20, fontFamily: 'Raleway'),
                 ),
               ),
@@ -93,7 +89,6 @@ class Home extends StatelessWidget {
         onPressed: () async {
           final userInput = await Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddTaskPage()));
-          //print("userInput i home(): $userInput");
           //pushar på userInput på listan
           Provider.of<Model>(context, listen: false)
               .addUserInputToTodoList(userInput);
@@ -118,7 +113,6 @@ class MoreButton extends StatelessWidget {
               onTap: () {
                 state.filter("all");
                 Navigator.pop(context);
-                state.myFlutterToast("Showing All");
               },
             ),
           ),
@@ -127,10 +121,8 @@ class MoreButton extends StatelessWidget {
               title: Text("done"),
               //true
               onTap: () {
-                //print("pressed done");
                 state.filter("done");
                 Navigator.pop(context);
-                state.myFlutterToast("Showing Done");
               },
             ),
           ),
@@ -139,10 +131,8 @@ class MoreButton extends StatelessWidget {
               title: Text("undone"),
               //false
               onTap: () {
-                //print("pressed undone");
                 state.filter("undone");
                 Navigator.pop(context);
-                state.myFlutterToast("Showing Undone");
               },
             ),
           ),
@@ -152,30 +142,55 @@ class MoreButton extends StatelessWidget {
   }
 }
 
-//tar emot
 class MyCustomListview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<Model>(
-      builder: (context, state, child) =>
-          Provider.of<Model>(context, listen: false).todoListIsEmpty()
-              ? Scrollbar(
-                  child: ListView.builder(
-                    itemCount: state.getTodoList.length,
-                    itemBuilder: (context, index) {
-                      return _myListContainer(context, index, state);
-                    },
-                  ),
-                )
-              : Center(
-                  child: Text(
-                      "Listan är tom :) \n\nLägg till med plusset i högra hörnet.",
-                      style: TextStyle(fontSize: 20, fontFamily: 'Raleway')),
-                ),
+      builder: (context, state, child) => state.syncingLists == false
+          ? Scrollbar(
+              child: ListView.builder(
+                itemCount: state.getTodoList.length,
+                itemBuilder: (context, index) {
+                  return _myListContainer(index, state);
+                },
+              ),
+            )
+          : Center(
+              child: SpinKitChasingDots(
+                color: Color.fromRGBO(69, 90, 100, 1),
+                size: 50.0,
+              ),
+            ),
     );
   }
 
-  Widget _myListContainer(context, index, state) {
+  // // Visar tom om listan är tom annars laddhjul
+  // Widget checkListIfEmpty(state) {
+  //   if (state.syncingLists == false) {
+  //     return Scrollbar(
+  //       child: ListView.builder(
+  //         itemCount: state.getTodoList.length,
+  //         itemBuilder: (context, index) {
+  //           return _myListContainer(index, state);
+  //         },
+  //       ),
+  //     );
+  //   } else if (state.syncingLists == false && state.todoListIsEmpty()) {
+  //     return Text(
+  //       "Listan är tom :) \n\nLägg till med plusset i högra hörnet.",
+  //       style: TextStyle(fontSize: 20, fontFamily: 'Raleway'),
+  //     );
+  //   } else {
+  //     return Center(
+  //       child: SpinKitRotatingCircle(
+  //         color: Color.fromRGBO(69, 90, 100, 1),
+  //         size: 50.0,
+  //       ),
+  //     );
+  //   }
+  // }
+
+  Widget _myListContainer(index, state) {
     return Container(
       height: 80,
       child: Card(

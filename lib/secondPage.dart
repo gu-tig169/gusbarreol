@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:todo_list/Model.dart';
+import 'package:todo_list/Model/Model.dart';
 
-//hämtar data från textcontainer och skicka till testArr i main
+//hämtar data från textcontainer och skicka till main
 class AddTaskPage extends StatelessWidget {
   final TextEditingController inputController = TextEditingController();
 
@@ -43,7 +43,6 @@ class AddTaskPage extends StatelessWidget {
               FlatButton.icon(
                 onPressed: () {
                   //Här ska poppas istället för pusha nytt objekt på stacken
-                  // Navigator.pop(context, inputController.text);
                   if (inputController.text == "") {
                     state.myFlutterToast(
                         "Skriv något i rutan för att lägga till en TODO.");
