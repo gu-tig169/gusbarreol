@@ -27,6 +27,7 @@ class Model extends ChangeNotifier {
     syncingLists = false;
   }
 
+  //returnerar lista beroende på vad filterlist är satt till.
   List get getTodoList {
     if (filterList == true) {
       return filteredList;

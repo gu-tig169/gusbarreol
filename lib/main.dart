@@ -11,6 +11,9 @@ void main() {
       create: (context) => Model(), builder: (context, child) => Home()));
 }
 
+//TODO
+//1. om listan är tom ska det visas en text som förklarar det. metoden är skriven brööör
+
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
